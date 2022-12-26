@@ -20,3 +20,4 @@ all:
 
 
   # Additional variables
+  gcp_acc_email: ascn-2223@ascn2223-365820.iam.gserviceaccount.com
