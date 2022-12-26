@@ -20,4 +20,3 @@ all:
 
 
   # Additional variables
-  cluster_name: ghost_cluster

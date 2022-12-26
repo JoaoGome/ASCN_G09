@@ -1,3 +1,8 @@
 ---
 # Playbook to deploy Ghost and its components
-# TO DO
+- name: Deploy the ghost app and generate the database
+  hosts: localhost
+  gather_facts: false
+  roles:
+      - deploy-app
+      - deploy-db

@@ -19,8 +19,9 @@
   retries: 3
 
 - name: Verify that the cluster was created
-  shell: gcloud container clusters describe  --project="{{ gcp_project}}"  --zone="{{ gcp_zone }}"  ascn-cluster
-  register: results
+  shell: gcloud container clusters describe  --project="{{ gcp_project }}"  --zone="{{ gcp_zone }}"  ascn-cluster
+  register: results    
+## comment just to fix highlighting"
 
 - name: Verify that the command succeeded
   assert:
