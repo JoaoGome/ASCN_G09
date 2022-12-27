@@ -3,7 +3,7 @@ all:
  vars:
 
   # GKE cluster variables
-  gcp_project: ascn2223-365820              # ID of GCP Project
+  gcp_project: ascn2223g9              # ID of GCP Project
   gcp_auth_kind: serviceaccount            # Do not change
   gcp_cred_file: ~/keys/key.json    # Path to service account keys (json file downloaded from GCP)
 
@@ -20,4 +20,9 @@ all:
 
 
   # Additional variables
-  gcp_acc_email: ascn-2223@ascn2223-365820.iam.gserviceaccount.com
+  gcp_cluster_name: ascn-cluster
+  gcp_pool_name: ascn-pool
+
+  namespace: ghost 
+  image: ghost:5.14.1
+  app: ghost

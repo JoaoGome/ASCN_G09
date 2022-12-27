@@ -1,25 +1,29 @@
 ---
-- name: Authenticate with GKE cluster
-  gce_module:
-    service_account_email: "{{ gcp_acc_email }}"
-    service_account_file: "{{ gcp_cred_file }}"
-    project_id: "{{ gcp_project }}"
-    auth_kind: "serviceaccount"
-  register: gke_auth
 
-- name: Build and push Docker image to Container Registry
-  docker_image:
-    name: "{{  }}"
-    build: "{{ build_context }}"
-    push: true
-    source: build
-
-- name: Deploy container to GKE cluster
-  k8s:
-    api_version: v1
-    src: "{{ deployment_manifest }}"
-    validate: False
-    auth_kind: "serviceaccount"
-    service_account_file: "{{ gcp_cred_file }}"
+- name: Create a k8s namespace
+  kubernetes.core.k8s:
     state: present
+    definition:
+      apiVersion: v1
+      kind: Namespace
+      metadata:
+        name: "{{ namespace }}"
+        labels:
+          app: "{{ namespace }}"
 
+- name: Create k8s pod for nginx
+  kubernetes.core.k8s:
+    state: present
+    definition:
+      apiVersion: v1
+      kind: Pod
+      metadata:
+        name: "{{ app }}"
+        namespace: "{{ namespace }}"
+        labels:
+          app: "{{ app }}"
+      spec:
+        containers:
+          - name: "{{ app }}"
+            image: "{{ image }}"
+            imagePullPolicy: Always
