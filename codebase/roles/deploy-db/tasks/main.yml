@@ -1,4 +1,56 @@
 ---
-#- name: Deploy Docker image to GKE cluster
-- debug:
-    msg: "deploy db"
+
+- name: Create MySQL secret
+  k8s:
+    api_version: v1
+    kind: Secret
+    name: mysql-pass
+    namespace: "{{ namespace }}"
+    data:
+      password: mypassword
+    state: present
+
+- name: Create MySQL deployment
+  k8s:
+    api_version: apps/v1
+    kind: Deployment
+    name: mysql
+    namespace: "{{ namespace }}"
+    labels:
+      app: mysql
+    spec:
+      selector:
+        matchLabels:
+          app: mysql
+      template:
+        metadata:
+          labels:
+            app: mysql
+        spec:
+          containers:
+          - name: mysql
+            image: mysql:8.0
+            env:
+            - name: MYSQL_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: mysql-pass
+                  key: password
+            ports:
+            - containerPort: 3306
+              name: mysql
+
+- name: Create MySQL service
+  k8s:
+    api_version: v1
+    kind: Service
+    name: mysql
+    namespace: "{{ namespace }}"
+    spec:
+      type: ClusterIP
+      selector:
+        app: mysql
+      ports:
+      - port: 3306
+        targetPort: mysql
+
