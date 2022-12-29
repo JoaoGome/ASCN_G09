@@ -11,7 +11,7 @@
         labels:
           app: "{{ namespace }}"
 
-- name: Create k8s pod for nginx
+- name: Create k8s pod for ghost
   kubernetes.core.k8s:
     state: present
     definition:

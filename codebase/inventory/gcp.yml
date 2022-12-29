@@ -26,3 +26,7 @@ all:
   namespace: ghost 
   image: ghost:5.14.1
   app: ghost
+
+  mysql_version: latest
+  mysql_replicas: 1
+
