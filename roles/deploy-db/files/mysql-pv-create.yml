@@ -1,0 +1,14 @@
+---
+# Deployment for MySQL
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: mysql-pv-storage
+  labels:
+    app: mysql
+    tier: database
+provisioner: pd.csi.storage.gke.io
+volumeBindingMode: WaitForFirstConsumer
+allowVolumeExpansion: true
+parameters:
+  type: pd-balanced

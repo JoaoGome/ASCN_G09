@@ -4,6 +4,5 @@
   hosts: localhost
   gather_facts: false
   roles:
-      - create_volumes
       - deploy-db
       - deploy-app

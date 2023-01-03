@@ -1,37 +1,79 @@
 ---
 
-# - name: Create MySQL secret
-#   k8s:
-#     api_version: v1
-#     kind: Secret
-#     name: mysql-pass
-#     namespace:  "{{ namespace }}"
-#     definition:
-#       spec:
-#         data:
-#           password: mypassword
-#     state: present
+- name: Create a pod for MySQL db
+    kubernetes.core.k8s:
+      state: present
+      namespace: default
+      definition:
+        apiVersion: apps/v1
+        kind: Deployment
+        metadata:
+          name: mysql-deployment
+          labels:
+            app: mysql
+            tier: database
+        spec:
+          selector:
+            matchLabels:
+              app: mysql
+          strategy:
+            type: Recreate
+          template:
+            metadata:
+              labels:
+                app: mysql
+                tier: database
+            spec:
+              containers:
+              - name: mysql
+                image: "{{ mysql_image }}"
+                env:
+                - name: MYSQL_ALLOW_EMPTY_PASSWORD
+                  value: "true"
+                - name: MYSQL_DATABASE
+                  value: "{{ MYSQL_DATABASE }}"
+                - name: MYSQL_USER
+                  value: "{{ MYSQL_USER }}"
+                - name: MYSQL_PASSWORD
+                  value: "{{ MYSQL_PASSWORD }}"
+                ports:
+                - containerPort: 3306
+                volumeMounts:
+                - name: mysql-persistent-storage
+                  mountPath: /var/lib/mysql
+              volumes:
+              - name: mysql-persistent-storage
+                persistentVolumeClaim:
+                  claimName: mysql-pv-claim
 
-- name: Create MySQL deployment
+- name: Create PV storage class
   kubernetes.core.k8s:
-    api_version: apps/v1
-    kind: Deployment
-    name: mysql
-    namespace: "{{ namespace }}"
-    src: "files/mysql-deployment.yml"
+    state: present
+    namespace: default
+    src: "mysql-pv-create.yml"
 
-- name: Claim persistent volume for MySQL
+- name: Create a persistent volume claim for SQL Server
   kubernetes.core.k8s:
-    api_version: apps/v1
-    kind: PersistentVolumeClaim
-    name: mysql
-    namespace: "{{ namespace }}"
+    state: present
+    namespace: default
     src: "mysql-pvc.yml"
 
-- name: Create MySQL service
+- name: Create a service for SQL Server
   kubernetes.core.k8s:
-    api_version: v1
-    kind: Service
-    name: mysql
-    namespace: "{{ namespace }}"
-    src: "mysql-service.yml"
+    state: present
+    namespace: default
+    definition:
+      apiVersion: v1
+      kind: Service
+      metadata:
+        name: "{{ MYSQL_HOST }}" # service / dns name
+        labels:
+          app: mysql
+          tier: database
+      spec:
+        type: ClusterIP
+        selector:
+          app: mysql
+        ports:
+          - targetPort: "{{ mysql-tp }}"
+            port: "{{ mysql-p }}"
