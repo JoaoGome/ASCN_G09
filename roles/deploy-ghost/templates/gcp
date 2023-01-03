@@ -18,7 +18,6 @@ all:
   ghost_ip: <GHOST_SERVICE_IP>     # Needs to be updated
   ghost_port: <GHOST_PORT>         # Needs to be updated
 
-
   # Additional variables
   gcp_cluster_name: ascn-cluster
   gcp_pool_name: ascn-pool
@@ -26,11 +25,22 @@ all:
   namespace: default
   ghost_image: ghost:5.14.1
   ghost_app: ghost
+  ghost-cp: 2368                # container port 
   ghost-tp: 2268                # internal port 
-  ghost-p: 80                # external port
+  ghost-p: 80                   # external port
 
 
   mysql_image: mysql:latest
   mysql-tp: 3306                  # internal port 
-  mysql-p: 3306                   # external port 
+  mysql-p: 3306                   # external port
+
+  # logins & stuff
+
+  mysql-host: sql-service
+  mysql-user: ghost
+  mysql-password: 123456          # SHOULD BE ON THE VAULT?? secrets??
+  mysql-name-db: ghost
+
+  ghost-email: postmaster@example.mailgun.org
+  ghost-email-pw: 1234567         # SHOULD BE ON THE VAULT?? secrets??
 

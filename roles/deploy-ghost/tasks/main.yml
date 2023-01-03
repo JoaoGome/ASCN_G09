@@ -17,8 +17,8 @@
           app: ghost
         ports:
           - protocol: TCP
-            port: "{{ ghost-p}}"
-            targetPort: "{{ ghost-tp}}"
+            port: "{{ ghost-p }}"
+            targetPort: "{{ ghost-tp }}"
 
 - name: fetch service ip
   shell: "kubectl get -n default service ghost-service -o wide | awk '{ print $4}' |  grep -v EXT"
@@ -44,7 +44,82 @@
     dest: inventory/gcp.yml
 
 - name: create the ghost pod
+  kubernetes.core.k8s:
+    state: present
+    definition:
+      apiVersion: v1
+      kind: Deployment
+      metadata:
+        name: ghost-deployment
+        namespace: default
+        labels:
+          app: ghost
+      spec: 
+        replicas: 1
+        selector: 
+          matchLabels:
+            app: ghost
+        template:
+          metadata:
+            labels:
+              app: ghost
+          spec:
+            containers:
+            - name: ghost
+              image: "{{ ghost-image }}"
+              env: # enviroment variables 
+              - name: database__client
+                value: mysql
+              - name: database__connection__host
+                value: "{{mysql-host}}"      
+              - name: database__connection__user       
+                value: "{{ mysql-user }}"
+              - name: database__connection__password  
+                value: "{{ mysql-password }}"             
+              - name: database__connection__database     
+                value: "{{ mysql-name-db }}"
+              - name: url
+                value: "http://{{ ghost-ip }}:{{ ghost_port }}"
+              - name: database__connection__port
+                value: "{{ mysql-p }}"
 
-- name: create tables
 
-- name: create admin
+              # no clue if this will work, ripped from the ghost config page, #pray
+              - name: mail__transport
+                value: SMTP
+              - name: mail__options__service
+                value: Mailgun
+              - name: mail__options__auth__user
+                value: "{{ ghost-email }}"
+              - name: mail__options__auth__pass
+                value: "{{ ghost-email-pw }}"
+
+
+- name: register MySQL pod
+  kubernetes.core.k8s_info:
+    kind: Pod
+    label_selectors:
+      - app=mysql
+  register: db_pod
+
+
+- name: Check until the MySQL pod is ready
+  shell: kubectl get pod {{ db_pod.resources[0].metadata.name }} -o jsonpath='{.status.phase}'
+  register: db_pod_ready
+  until: db_pod_ready.stdout.find("Running") != -1
+  retries: 10
+  delay: 20
+
+- name: Create Users table in the database
+  shell: kubectl exec -it {{ db_pod.resources[0].metadata.name }} -- /bin/bash -c "mysql -D ghost -e \"SELECT count(*) FROM information_schema.tables WHERE table_schema = 'ghost' AND table_name = 'users'\""
+  register: table_users
+  until: table_users.stdout.find("1") != -1
+  retries: 10
+  delay: 20
+
+- name: Admin account create
+  shell: kubectl exec -it {{ db_pod.resources[0].metadata.name }} -- /bin/bash -c "mysql -D ghost -e \"UPDATE users SET name='ascn', password='\\\$2b\\\$10\\\$9xMUdA/lQsNJ0W4HeSfJWu8Z9IFmqgq2pz4TycBKcOO.bW/dqgTwu', email='ascn@example.com', status='active' where id=1; SELECT * FROM users WHERE id=1;\""
+  register: blog_admin
+  until: blog_admin.stdout.find("ascn") != -1
+  retries: 10
+  delay: 20
