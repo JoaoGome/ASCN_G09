@@ -1,4 +1,4 @@
-___
+---
 all:
  vars:
 
@@ -7,9 +7,9 @@ all:
   gcp_auth_kind: serviceaccount            # Do not change
   gcp_cred_file: ~/keys/key.json    # Path to service account keys (json file downloaded from GCP)
 
-  gcp_zone: us_central1_a
+  gcp_zone: us-central1-a
   gcp_image_type: ubuntu_containerd
-  gcp_machine_type: e2_small          # Can be changed if necessary
+  gcp_machine_type: e2-small          # Can be changed if necessary
   gcp_disk_size_gb: 100                # Can be changed if necessary
   gcp_initial_node_count: 2            # Number of nodes to create. Can be changed if necessary
 
@@ -36,7 +36,7 @@ all:
 
   # logins & stuff
 
-  mysql_host: sql_service
+  mysql_host: sql-service
   mysql_user: ghost
   mysql_password: 123456          # SHOULD BE ON THE VAULT?? secrets??
   mysql_name_db: ghost
