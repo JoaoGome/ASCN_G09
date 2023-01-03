@@ -1,61 +1,37 @@
 ---
 
-- name: Create MySQL secret
-  k8s:
-    api_version: v1
-    kind: Secret
-    name: mysql-pass
-    namespace:  "{{ namespace }}"
-    definition:
-      spec:
-        data:
-          password: mypassword
-    state: present
+# - name: Create MySQL secret
+#   k8s:
+#     api_version: v1
+#     kind: Secret
+#     name: mysql-pass
+#     namespace:  "{{ namespace }}"
+#     definition:
+#       spec:
+#         data:
+#           password: mypassword
+#     state: present
 
 - name: Create MySQL deployment
-  k8s:
+  kubernetes.core.k8s:
     api_version: apps/v1
     kind: Deployment
     name: mysql
     namespace: "{{ namespace }}"
-    definition:
-      metadata:
-        labels:
-          app: mysql
-      spec:
-        selector:
-          matchLabels:
-            app: mysql
-        template:
-          metadata:
-            labels:
-              app: mysql
-          spec:
-            containers:
-            - name: mysql
-              image: mysql:8.0
-              env:
-              - name: MYSQL_ROOT_PASSWORD
-                valueFrom:
-                  secretKeyRef:
-                    name: mysql-pass
-                    key: password
-              ports:
-              - containerPort: 3306
-                name: mysql
+    src: "files/mysql-deployment.yml"
+
+- name: Claim persistent volume for MySQL
+  kubernetes.core.k8s:
+    api_version: apps/v1
+    kind: PersistentVolumeClaim
+    name: mysql
+    namespace: "{{ namespace }}"
+    src: "mysql-pvc.yml"
 
 - name: Create MySQL service
-  k8s:
+  kubernetes.core.k8s:
     api_version: v1
     kind: Service
     name: mysql
     namespace: "{{ namespace }}"
-    definition:
-      spec:
-        type: ClusterIP
-        selector:
-          app: mysql
-        ports:
-        - port: 3306
-          targetPort: mysql
-
+    src: "mysql-service.yml"

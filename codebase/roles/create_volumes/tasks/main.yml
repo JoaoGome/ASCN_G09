@@ -1,0 +1,14 @@
+---
+# - name: Create Disk
+#   kubernetes.core.k8s:
+#     state: present
+#     namespace: "{{ namespace }}"
+#     src: "files/persistent-disk.yml"
+
+- name: Create volumes
+  kubernetes.core.k8s:
+    kind: PersistentVolume
+    state: present
+    namespace: "{{ namespace }}"
+    src: "persistent-volume.yml"
+

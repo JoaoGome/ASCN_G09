@@ -23,7 +23,7 @@ all:
   gcp_cluster_name: ascn-cluster
   gcp_pool_name: ascn-pool
 
-  namespace: ghost 
+  namespace: default
   image: ghost:5.14.1
   app: ghost
 
