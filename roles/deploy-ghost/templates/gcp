@@ -1,4 +1,4 @@
----
+___
 all:
  vars:
 
@@ -7,9 +7,9 @@ all:
   gcp_auth_kind: serviceaccount            # Do not change
   gcp_cred_file: ~/keys/key.json    # Path to service account keys (json file downloaded from GCP)
 
-  gcp_zone: us-central1-a
+  gcp_zone: us_central1_a
   gcp_image_type: ubuntu_containerd
-  gcp_machine_type: e2-small          # Can be changed if necessary
+  gcp_machine_type: e2_small          # Can be changed if necessary
   gcp_disk_size_gb: 100                # Can be changed if necessary
   gcp_initial_node_count: 2            # Number of nodes to create. Can be changed if necessary
 
@@ -19,28 +19,28 @@ all:
   ghost_port: <GHOST_PORT>         # Needs to be updated
 
   # Additional variables
-  gcp_cluster_name: ascn-cluster
-  gcp_pool_name: ascn-pool
+  gcp_cluster_name: ascn_cluster
+  gcp_pool_name: ascn_pool
 
   namespace: default
   ghost_image: ghost:5.14.1
   ghost_app: ghost
-  ghost-cp: 2368                # container port 
-  ghost-tp: 2268                # internal port 
-  ghost-p: 80                   # external port
+  ghost_cp: 2368                # container port 
+  ghost_tp: 2268                # internal port 
+  ghost_p: 80                   # external port
 
 
   mysql_image: mysql:latest
-  mysql-tp: 3306                  # internal port 
-  mysql-p: 3306                   # external port
+  mysql_tp: 3306                  # internal port 
+  mysql_p: 3306                   # external port
 
   # logins & stuff
 
-  mysql-host: sql-service
-  mysql-user: ghost
-  mysql-password: 123456          # SHOULD BE ON THE VAULT?? secrets??
-  mysql-name-db: ghost
+  mysql_host: sql_service
+  mysql_user: ghost
+  mysql_password: 123456          # SHOULD BE ON THE VAULT?? secrets??
+  mysql_name_db: ghost
 
-  ghost-email: postmaster@example.mailgun.org
-  ghost-email-pw: 1234567         # SHOULD BE ON THE VAULT?? secrets??
+  ghost_email: postmaster@example.mailgun.org
+  ghost_email_pw: 1234567         # SHOULD BE ON THE VAULT?? secrets??
 
