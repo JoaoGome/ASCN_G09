@@ -1,24 +1,11 @@
 ---
 
-# - name: Create a k8s namespace
-#   kubernetes.core.k8s:
-#     state: present
-#     definition:
-#       apiVersion: v1
-#       kind: Namespace
-#       metadata:
-#         name: "{{ namespace }}"
-#         labels:
-#           app: "{{ namespace }}"
+- name: Create Ghost service
 
-- name: Deploy ghost image
-  kubernetes.core.k8s:
-    state: present
-    namespace: "{{ namespace }}"
-    src: ghost-deployment.yml
+- name: fetch service ip/ load service ip/ set ghost ip/ set ghost ip in the inventory file
 
-- name: Create ghost service
-  kubernetes.core.k8s:
-    state: present
-    namespace: "{{ namespace }}"
-    src: ghost-service.yml
+- name: create the ghost pod
+
+- name: create tables
+
+- name: create admin
