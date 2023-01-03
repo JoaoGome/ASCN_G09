@@ -1,0 +1,36 @@
+---
+all:
+ vars:
+
+  # GKE cluster variables
+  gcp_project: ascn2223g9              # ID of GCP Project
+  gcp_auth_kind: serviceaccount            # Do not change
+  gcp_cred_file: ~/keys/key.json    # Path to service account keys (json file downloaded from GCP)
+
+  gcp_zone: us-central1-a
+  gcp_image_type: ubuntu_containerd
+  gcp_machine_type: e2-small          # Can be changed if necessary
+  gcp_disk_size_gb: 100                # Can be changed if necessary
+  gcp_initial_node_count: 2            # Number of nodes to create. Can be changed if necessary
+
+
+  # APP variables
+  ghost_ip: <GHOST_SERVICE_IP>     # Needs to be updated
+  ghost_port: <GHOST_PORT>         # Needs to be updated
+
+
+  # Additional variables
+  gcp_cluster_name: ascn-cluster
+  gcp_pool_name: ascn-pool
+
+  namespace: default
+  ghost_image: ghost:5.14.1
+  ghost_app: ghost
+  ghost-tp: 2268                # internal port 
+  ghost-p: 80                # external port
+
+
+  mysql_image: mysql:latest
+  mysql-tp: 3306                  # internal port 
+  mysql-p: 3306                   # external port 
+
