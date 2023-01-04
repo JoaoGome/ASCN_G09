@@ -1,0 +1,25 @@
+- name: get deployment
+  kubernetes.core.k8s_info:
+    kind: Deployment
+    label_selectors:
+      - app=ghost
+  register: ghost_deployment
+
+- name: remove deployment 
+  kubernetes.core.k8s:
+    state: absent
+    namespace: default
+    definition: "{{ ghost_deployment.resources[0] }}"
+
+- name: get service
+  kubernetes.core.k8s_info:
+    kind: Service
+    label_selectors:
+      - app=ghost
+  register: ghost_service
+
+- name: remove service
+  kubernetes.core.k8s:
+    state: absent
+    namespace: default
+    definition: "{{ ghost_service.resources[0] }}"

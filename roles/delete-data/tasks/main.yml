@@ -1,0 +1,13 @@
+- name: get the StorageClass
+  kubernetes.core.k8s_info:
+    kind: StorageClass
+    label_selectors:
+      - app=mysql
+      - tier=database
+  register: mysql_storage_class
+
+- name: remove storage class
+  kubernetes.core.k8s:
+    state: absent
+    namespace: default
+    definition: "{{ mysql_storage_class.resources[0] }}"
