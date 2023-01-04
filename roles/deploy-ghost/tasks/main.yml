@@ -21,7 +21,7 @@
             targetPort: "{{ ghost_tp }}"
 
 - name: fetch service ip
-  shell: "google-cloud-cli.kubectl get -n default service ghost_service -o wide | awk '{ print $4}' |  grep -v EXT"
+  shell: "google-cloud-cli.kubectl get -n default service ghost-service -o wide | awk '{ print $4}' |  grep -v EXT"
   register: k_ext_ip
   until: k_ext_ip.stdout[0] != "<"
   retries: 2
@@ -81,7 +81,7 @@
               - name: url
                 value: "http://{{ ghost_ip }}:{{ ghost_port }}"
               - name: database__connection__port
-                value: "{{ mysql_p }}"
+                value: "{{ mysql_p_string }}"
 
               # no clue if this will work, ripped from the ghost config page, #pray
               - name: mail__transport
