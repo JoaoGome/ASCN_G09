@@ -8,7 +8,7 @@
       apiVersion: v1
       kind: Service
       metadata:
-        name: ghost-service 
+        name: ghost_service 
         labels:
           app: ghost
       spec:
@@ -17,11 +17,11 @@
           app: ghost
         ports:
           - protocol: TCP
-            port: "{{ ghost-p }}"
-            targetPort: "{{ ghost-tp }}"
+            port: "{{ ghost_p }}"
+            targetPort: "{{ ghost_tp }}"
 
 - name: fetch service ip
-  shell: "kubectl get -n default service ghost-service -o wide | awk '{ print $4}' |  grep -v EXT"
+  shell: "kubectl get -n default service ghost_service -o wide | awk '{ print $4}' |  grep -v EXT"
   register: k_ext_ip
   until: k_ext_ip.stdout[0] != "<"
   retries: 2
@@ -34,7 +34,7 @@
       - app=ghost
   register: ghost_service
 
-  - name: set ghost ip
+- name: set ghost ip
   set_fact:
     ghost_service_ip: "{{ ghost_service.resources[0].status.loadBalancer.ingress[0].ip }}"
 
@@ -50,7 +50,7 @@
       apiVersion: v1
       kind: Deployment
       metadata:
-        name: ghost-deployment
+        name: ghost_deployment
         namespace: default
         labels:
           app: ghost
@@ -66,23 +66,22 @@
           spec:
             containers:
             - name: ghost
-              image: "{{ ghost-image }}"
+              image: "{{ ghost_image }}"
               env: # enviroment variables 
               - name: database__client
                 value: mysql
               - name: database__connection__host
-                value: "{{mysql-host}}"      
+                value: "{{mysql_host}}"      
               - name: database__connection__user       
-                value: "{{ mysql-user }}"
+                value: "{{ mysql_user }}"
               - name: database__connection__password  
-                value: "{{ mysql-password }}"             
+                value: "{{ mysql_password }}"             
               - name: database__connection__database     
-                value: "{{ mysql-name-db }}"
+                value: "{{ mysql_name_db }}"
               - name: url
-                value: "http://{{ ghost-ip }}:{{ ghost_port }}"
+                value: "http://{{ ghost_ip }}:{{ ghost_port }}"
               - name: database__connection__port
-                value: "{{ mysql-p }}"
-
+                value: "{{ mysql_p }}"
 
               # no clue if this will work, ripped from the ghost config page, #pray
               - name: mail__transport
@@ -90,10 +89,9 @@
               - name: mail__options__service
                 value: Mailgun
               - name: mail__options__auth__user
-                value: "{{ ghost-email }}"
+                value: "{{ ghost_email }}"
               - name: mail__options__auth__pass
-                value: "{{ ghost-email-pw }}"
-
+                value: "{{ ghost_email_pw }}"
 
 - name: register MySQL pod
   kubernetes.core.k8s_info:
@@ -101,7 +99,6 @@
     label_selectors:
       - app=mysql
   register: db_pod
-
 
 - name: Check until the MySQL pod is ready
   shell: kubectl get pod {{ db_pod.resources[0].metadata.name }} -o jsonpath='{.status.phase}'
