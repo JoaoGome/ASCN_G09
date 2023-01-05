@@ -1,0 +1,42 @@
+- name: get db deployment
+  kubernetes.core.k8s_info:
+    kind: Deployment
+    label_selectors:
+      - app=mysql
+      - tier=database
+  register: mysql_deployment
+
+- name: remove db deployment
+  kubernetes.core.k8s:
+    state: absent
+    namespace: default
+    definition: "{{ mysql_deployment.resources[0] }}"
+
+- name: get db service
+  kubernetes.core.k8s_info:
+    kind: Service
+    label_selectors:
+      - app=mysql
+      - tier=database
+  register: mysql_service
+
+- name: remove db service
+  kubernetes.core.k8s:
+    state: absent
+    namespace: default
+    definition: "{{ mysql_service.resources[0] }}"
+
+- name: get db pvc
+  kubernetes.core.k8s_info:
+    kind: PersistentVolumeClaim
+    label_selectors:
+      - app=mysql
+      - tier=database
+  register: mysql_pvc
+
+- name: remove db pvc
+  kubernetes.core.k8s:
+    state: absent
+    namespace: default
+    definition: "{{ mysql_pvc.resources[0] }}"
+
