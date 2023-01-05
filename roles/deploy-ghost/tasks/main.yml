@@ -24,8 +24,8 @@
   shell: "kubectl get -n default service ghost-service -o wide | awk '{ print $4}' |  grep -v EXT"
   register: k_ext_ip
   until: k_ext_ip.stdout[0] != "<"
-  retries: 2
-  delay: 15
+  retries: 20
+  delay: 10
 
 - name: load service ip
   kubernetes.core.k8s_info:
@@ -71,7 +71,7 @@
               - name: database__client
                 value: mysql
               - name: database__connection__host
-                value: "{{mysql_host}}"      
+                value: "{{ mysql_host }}"      
               - name: database__connection__user       
                 value: "{{ mysql_user }}"
               - name: database__connection__password  
@@ -104,19 +104,19 @@
   shell: kubectl get pod {{ db_pod.resources[0].metadata.name }} -o jsonpath='{.status.phase}'
   register: db_pod_ready
   until: db_pod_ready.stdout.find("Running") != -1
-  retries: 10
-  delay: 20
+  retries: 20
+  delay: 10
 
-- name: Create Users table in the database
+- name: w8 for ghost to create the users table
   shell: kubectl exec -it {{ db_pod.resources[0].metadata.name }} -- /bin/bash -c "mysql -D ghost -e \"SELECT count(*) FROM information_schema.tables WHERE table_schema = 'ghost' AND table_name = 'users'\""
   register: table_users
   until: table_users.stdout.find("1") != -1
-  retries: 10
-  delay: 20
+  retries: 20
+  delay: 10
 
 - name: Admin account create
   shell: kubectl exec -it {{ db_pod.resources[0].metadata.name }} -- /bin/bash -c "mysql -D ghost -e \"UPDATE users SET name='ascn', password='\\\$2b\\\$10\\\$9xMUdA/lQsNJ0W4HeSfJWu8Z9IFmqgq2pz4TycBKcOO.bW/dqgTwu', email='ascn@example.com', status='active' where id=1; SELECT * FROM users WHERE id=1;\""
   register: blog_admin
   until: blog_admin.stdout.find("ascn") != -1
-  retries: 10
-  delay: 20
+  retries: 20
+  delay: 10
