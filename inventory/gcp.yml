@@ -38,9 +38,16 @@ all:
 
   mysql_host: sql-service
   mysql_user: ghost
-  mysql_password: "123456"          # SHOULD BE ON THE VAULT?? secrets??
+  # mysql_password: abcdefg          # SHOULD BE ON THE VAULT?? secrets??
+  mysql_password: !vault |
+          $ANSIBLE_VAULT;1.1;AES256
+          34623161393231333630393832383937383631323734373765343365663339666665623034313765
+          6463383835633935636364323138313966326262303262640a353438396462323433613562656666
+          34303838663064313566333934653261313239326461626136303935333964613332343731396662
+          6531373832646538650a363035636437386161343233663634326232353463643266386164346234
+          6431
   mysql_name_db: ghost
 
   ghost_email: postmaster@example.mailgun.org
-  ghost_email_pw: "1234567"         # SHOULD BE ON THE VAULT?? secrets??
+  ghost_email_pw: gfedcba         # SHOULD BE ON THE VAULT?? secrets??
 
