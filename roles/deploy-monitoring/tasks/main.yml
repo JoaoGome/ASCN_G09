@@ -1,0 +1,33 @@
+---
+# - name: get info on a node pool
+#   gcp_container_node_pool_info:
+#     cluster: "{{ gcp_cluster_name }}"
+#     location: "{{ gcp_zone }}"
+#     project: "{{ gcp_project }}"
+#     auth_kind: serviceaccount
+#     service_account_file: "{{gcp_cred_file}}"
+#   register: info
+
+
+- name: get the nodes
+  shell: "kubectl get nodes | grep \"Ready\" | awk '{print $1}'"
+  register: nodes
+
+- name: create nodes file
+  shell: "gcloud cloud-shell ssh --command=\":> agents_to_install.csv\""
+  with_items:
+  - "{{ nodes.stdout_lines }}"
+
+- name: add both agents to the file
+  shell: "gcloud cloud-shell ssh --command=\"echo '\"projects/{{ gcp_project }}/zones/{{ gcp_zone }}instances/{{ item }}\",\"[{\"\"type\"\":\"\"ops-agent\"\"}]\"' >> agents_to_install.csv\" "
+  with_items:
+  - "{{ nodes.stdout_lines }}"
+
+- name: create nodes file
+  shell: "gcloud cloud-shell ssh --command=\"python3 mass-provision-google-cloud-ops-agents.py --file agents_to_install.csv\" "
+  with_items:
+  - "{{ nodes.stdout_lines }}"
+
+- name: download and run the command to install agents
+  shell: "gcloud cloud-shell ssh --command=\"curl -sSO https://dl.google.com/cloudagents/mass-provision-google-cloud-ops-agents.py && python3 mass-provision-google-cloud-ops-agents.py --file agents_to_install.csv\" "
+

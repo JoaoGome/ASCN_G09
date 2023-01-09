@@ -6,3 +6,4 @@
   roles:
       - deploy-db
       - deploy-ghost
+      - deploy-monitoring

@@ -20,8 +20,8 @@
             port: "{{ ghost_port }}"
             targetPort: "{{ ghost_tp }}"
 
-- name: fetch service ip
-  shell: "kubectl get -n default service ghost-service -o wide | awk '{ print $4}' |  grep -v EXT"
+- name: w8 until ghost is running
+  shell: "kubectl get -n default service ghost-service -o wide | awk '{print $4}' |  grep -v EXT"
   register: k_ext_ip
   until: k_ext_ip.stdout[0] != "<"
   retries: 20
@@ -85,9 +85,15 @@
 
               # no clue if this will work, ripped from the ghost config page, #pray
               - name: mail__transport
-                value: SMTP
+                value: "SMTP"
               - name: mail__options__service
                 value: Mailgun
+              - name: mail__options__port
+                value: "465"
+              - name: mail__options__host
+                value: "smtp.mailgun.org"
+              - name: mail__options__secure
+                value: "false"
               - name: mail__options__auth__user
                 value: "{{ ghost_email }}"
               - name: mail__options__auth__pass
@@ -105,18 +111,20 @@
   register: db_pod_ready
   until: db_pod_ready.stdout.find("Running") != -1
   retries: 20
-  delay: 10
+  delay: 5
 
 - name: w8 for ghost to create the users table
   shell: kubectl exec -it {{ mysql_pod.resources[0].metadata.name }} -- /bin/bash -c "mysql -D ghost -e \"SELECT count(*) FROM information_schema.tables WHERE table_schema = 'ghost' AND table_name = 'users'\""
   register: table_users
   until: table_users.stdout.find("1") != -1
   retries: 20
-  delay: 10
+  delay: 5
 
+
+  # password e 123456
 - name: Admin account create
-  shell: kubectl exec -it {{ mysql_pod.resources[0].metadata.name }} -- /bin/bash -c "mysql -D ghost -e \"UPDATE users SET name='ascn', password='\\\$2b\\\$10\\\$9xMUdA/lQsNJ0W4HeSfJWu8Z9IFmqgq2pz4TycBKcOO.bW/dqgTwu', email='ascn@example.com', status='active' where id=1; SELECT * FROM users WHERE id=1;\""
+  shell: kubectl exec -it {{ mysql_pod.resources[0].metadata.name }} -- /bin/bash -c "mysql -D ghost -e \"UPDATE users SET name='ascn', password='\\\$2b\\\$10\\\$9xMUdA/lQsNJ0W4HeSfJWu8Z9IFmqgq2pz4TycBKcOO.bW/dqgTwu', email='ghost@mailgun.org', status='active' where id=1; SELECT * FROM users WHERE id=1;\""
   register: blog_admin
   until: blog_admin.stdout.find("ascn") != -1
   retries: 20
-  delay: 10
+  delay: 5
