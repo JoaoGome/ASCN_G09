@@ -21,7 +21,7 @@ all:
   # Additional variables
   gcp_cluster_name: ascn-cluster
   gcp_pool_name: ascn-pool
-
+z
   namespace: default
   ghost_image: ghost:5.14.1
   ghost_app: ghost
