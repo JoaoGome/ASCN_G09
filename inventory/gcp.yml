@@ -15,8 +15,8 @@ all:
 
 
   # APP variables
-  ghost_ip: <GHOST_SERVICE_IP>     # Needs to be updated
-  #ghost_port: <GHOST_PORT>         # Needs to be updated
+  ghost_ip: <GHOST_SERVICE_IP>     # ip used ny ghost
+  ghost_port: 80        # port that hosts the service
 
   # Additional variables
   gcp_cluster_name: ascn-cluster
@@ -27,7 +27,6 @@ all:
   ghost_app: ghost
   ghost_cp: 2368                # container port 
   ghost_tp: 2368                # internal port 
-  ghost_p: 80                   # external port
 
 
   mysql_image: mysql:latest
@@ -48,6 +47,12 @@ all:
           6431
   mysql_name_db: ghost
 
-  ghost_email: postmaster@example.mailgun.org
-  ghost_email_pw: gfedcba         # SHOULD BE ON THE VAULT?? secrets??
-
+  ghost_email: postmaster@sandbox35ee91f4a15e4a749b22988f10aabb9b.mailgun.org
+  ghost_email_pw: $ANSIBLE_VAULT;1.1;AES256
+        37313165623765643661313339383335306234396535333738363239323164346333633362646230
+        3135346136663534653131323239633961383363393835620a303036356636626564323463326562
+        30353535383133353739323332623230333563313834353637353635323866633033643431393035
+        6631356265656231310a663665363131373861303362376339376337306462323365346463643734
+        39623562613436333538366234626533346366313733326335616138396437633366393733633139
+        62366338343263353031343132383337363362393436636430376663663232356464663431323465
+        623462653865323635323361373434633937

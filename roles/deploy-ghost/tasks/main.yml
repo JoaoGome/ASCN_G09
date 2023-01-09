@@ -17,7 +17,7 @@
           app: ghost
         ports:
           - protocol: TCP
-            port: "{{ ghost_p }}"
+            port: "{{ ghost_port }}"
             targetPort: "{{ ghost_tp }}"
 
 - name: fetch service ip
@@ -36,7 +36,7 @@
 
 - name: set ghost ip
   set_fact:
-    ghost_service_ip: "{{ ghost_service.resources[0].status.loadBalancer.ingress[0].ip }}"
+    ghost_ip: "{{ ghost_service.resources[0].status.loadBalancer.ingress[0].ip }}"
 
 - name: Set ghost ip in the inventory file
   template:
