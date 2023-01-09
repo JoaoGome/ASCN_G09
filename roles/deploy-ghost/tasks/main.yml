@@ -98,24 +98,24 @@
     kind: Pod
     label_selectors:
       - app=mysql
-  register: db_pod
+  register: mysql_pod
 
 - name: Check until the MySQL pod is ready
-  shell: kubectl get pod {{ db_pod.resources[0].metadata.name }} -o jsonpath='{.status.phase}'
+  shell: kubectl get pod {{ mysql_pod.resources[0].metadata.name }} -o jsonpath='{.status.phase}'
   register: db_pod_ready
   until: db_pod_ready.stdout.find("Running") != -1
   retries: 20
   delay: 10
 
 - name: w8 for ghost to create the users table
-  shell: kubectl exec -it {{ db_pod.resources[0].metadata.name }} -- /bin/bash -c "mysql -D ghost -e \"SELECT count(*) FROM information_schema.tables WHERE table_schema = 'ghost' AND table_name = 'users'\""
+  shell: kubectl exec -it {{ mysql_pod.resources[0].metadata.name }} -- /bin/bash -c "mysql -D ghost -e \"SELECT count(*) FROM information_schema.tables WHERE table_schema = 'ghost' AND table_name = 'users'\""
   register: table_users
   until: table_users.stdout.find("1") != -1
   retries: 20
   delay: 10
 
 - name: Admin account create
-  shell: kubectl exec -it {{ db_pod.resources[0].metadata.name }} -- /bin/bash -c "mysql -D ghost -e \"UPDATE users SET name='ascn', password='\\\$2b\\\$10\\\$9xMUdA/lQsNJ0W4HeSfJWu8Z9IFmqgq2pz4TycBKcOO.bW/dqgTwu', email='ascn@example.com', status='active' where id=1; SELECT * FROM users WHERE id=1;\""
+  shell: kubectl exec -it {{ mysql_pod.resources[0].metadata.name }} -- /bin/bash -c "mysql -D ghost -e \"UPDATE users SET name='ascn', password='\\\$2b\\\$10\\\$9xMUdA/lQsNJ0W4HeSfJWu8Z9IFmqgq2pz4TycBKcOO.bW/dqgTwu', email='ascn@example.com', status='active' where id=1; SELECT * FROM users WHERE id=1;\""
   register: blog_admin
   until: blog_admin.stdout.find("ascn") != -1
   retries: 20

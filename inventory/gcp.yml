@@ -16,7 +16,7 @@ all:
 
   # APP variables
   ghost_ip: <GHOST_SERVICE_IP>     # Needs to be updated
-  ghost_port: <GHOST_PORT>         # Needs to be updated
+  #ghost_port: <GHOST_PORT>         # Needs to be updated
 
   # Additional variables
   gcp_cluster_name: ascn-cluster
@@ -26,7 +26,7 @@ all:
   ghost_image: ghost:5.14.1
   ghost_app: ghost
   ghost_cp: 2368                # container port 
-  ghost_tp: 2268                # internal port 
+  ghost_tp: 2368                # internal port 
   ghost_p: 80                   # external port
 
 
