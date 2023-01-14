@@ -43,6 +43,12 @@
     src: gcp
     dest: inventory/gcp.yml
 
+- name: Replace ghost_ip in gcp.yml
+  replace:
+    path: inventory/gcp.yml
+    regexp: 'ghost_ip: \s\S*'
+    replace: 'ghost_ip: {{ ghost_ip }}'
+
 - name: create the ghost pod
   kubernetes.core.k8s:
     state: present
@@ -83,7 +89,7 @@
               - name: database__connection__port
                 value: "{{ mysql_p_string }}"
 
-              # no clue if this will work, ripped from the ghost config page, #pray
+              # does not work properly, multiple option pairings tried but nothing works
               - name: mail__transport
                 value: "SMTP"
               - name: mail__options__service
@@ -128,3 +134,9 @@
   until: blog_admin.stdout.find("ascn") != -1
   retries: 20
   delay: 5
+
+- name: Replace ghost_ip in test file back to placeholder
+  replace:
+    path: 'http_request.jmx'
+    regexp: '<stringProp name="HTTPSampler.domain">\S*</stringProp>'
+    replace: '<stringProp name="HTTPSampler.domain">{{ ghost_ip }}</stringProp>'
