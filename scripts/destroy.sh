@@ -1,1 +1,1 @@
-ansible-playbook deploy-ghost.yml -i inventory/gcp.yml --ask-vault-password
+ansible-playbook destroy-gke-cluster.yml -i inventory/gcp.yml

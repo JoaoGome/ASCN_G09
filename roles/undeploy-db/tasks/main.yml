@@ -52,8 +52,3 @@
     regexp: '<stringProp name="HTTPSampler.domain">\S*</stringProp>'
     replace: '<stringProp name="HTTPSampler.domain">{{ ghost_ip }}</stringProp>'
 
-
-
-            <stringProp name="HTTPSampler.domain">104.197.151.198</stringProp>
-
-

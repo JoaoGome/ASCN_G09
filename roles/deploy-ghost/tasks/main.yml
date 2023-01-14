@@ -104,6 +104,10 @@
                 value: "{{ ghost_email }}"
               - name: mail__options__auth__pass
                 value: "{{ ghost_email_pw }}"
+              resources:
+                requests:
+                  cpu: "500m"
+            
 
 - name: register MySQL pod
   kubernetes.core.k8s_info:
@@ -129,7 +133,7 @@
 
   # password e 123456
 - name: Admin account create
-  shell: kubectl exec -it {{ mysql_pod.resources[0].metadata.name }} -- /bin/bash -c "mysql -D ghost -e \"UPDATE users SET name='ascn', password='\\\$2b\\\$10\\\$9xMUdA/lQsNJ0W4HeSfJWu8Z9IFmqgq2pz4TycBKcOO.bW/dqgTwu', email='ghost@mailgun.org', status='active' where id=1; SELECT * FROM users WHERE id=1;\""
+  shell: kubectl exec -it {{ mysql_pod.resources[0].metadata.name }} -- /bin/bash -c "mysql -D ghost -e \"UPDATE users SET name='ascn', password='\\\$2b\\\$10\\\$7ccB9rulkdjwd/nn4rLZP.0mU.Ebz7EmatHlzb3zFBD/ZrWqQHCI2', email='ascn@example.com', status='active' where id=1; SELECT * FROM users WHERE id=1;\""
   register: blog_admin
   until: blog_admin.stdout.find("ascn") != -1
   retries: 20
@@ -140,3 +144,8 @@
     path: 'http_request.jmx'
     regexp: '<stringProp name="HTTPSampler.domain">\S*</stringProp>'
     replace: '<stringProp name="HTTPSampler.domain">{{ ghost_ip }}</stringProp>'
+
+- name: configure autoscaling
+  shell: kubectl autoscale deployment ghost-deployment --min=1 --max=3 --cpu-percent=80
+
+
