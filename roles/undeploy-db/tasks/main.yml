@@ -40,3 +40,20 @@
     namespace: default
     definition: "{{ mysql_pvc.resources[0] }}"
 
+- name: Replace ghost_ip in gcp.yml back to placeholder
+  replace:
+    path: inventory/gcp.yml
+    regexp: 'ghost_ip: \s\S*'
+    replace: 'ghost_ip: <GHOST_IP>'
+
+- name: Replace ghost_ip in test file back to placeholder
+  replace:
+    path: inventory/gcp.yml
+    regexp: '<stringProp name="HTTPSampler.domain">\S*</stringProp>'
+    replace: '<stringProp name="HTTPSampler.domain">{{ ghost_ip }}</stringProp>'
+
+
+
+            <stringProp name="HTTPSampler.domain">104.197.151.198</stringProp>
+
+
