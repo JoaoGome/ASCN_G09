@@ -46,7 +46,7 @@
 - name: Replace ghost_ip in gcp.yml
   replace:
     path: inventory/gcp.yml
-    regexp: 'ghost_ip: \s\S*'
+    regexp: 'ghost_ip: \S*'
     replace: 'ghost_ip: {{ ghost_ip }}'
 
 - name: create the ghost pod
