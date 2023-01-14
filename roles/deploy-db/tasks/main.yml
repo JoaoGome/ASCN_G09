@@ -46,11 +46,24 @@
               persistentVolumeClaim:
                 claimName: mysql-pv-claim
 
+# check if storage class exists
+- name: get the StorageClass
+  kubernetes.core.k8s_info:
+    kind: StorageClass
+    label_selectors:
+      - app=mysql
+      - tier=database
+  register: mysql_storage_class
+- debug:
+    var: mysql_storage_class
+  
+# run only if there isnt already a storage class
 - name: Create PV storage class
   kubernetes.core.k8s:
     state: present
     namespace: default
     src: "mysql-pv-create.yml"
+  when: mysql_storage_class.resources is not defined or (mysql_storage_class.resources==[])
 
 - name: Create a persistent volume claim for SQL Server
   kubernetes.core.k8s:
