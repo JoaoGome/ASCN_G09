@@ -15,7 +15,7 @@ all:
 
 
   # APP variables
-  ghost_ip: 34.70.21.75     # ip used ny ghost
+  ghost_ip: 34.123.114.71     # ip used ny ghost
   ghost_port: 80        # port that hosts the service
 
   # Additional variables

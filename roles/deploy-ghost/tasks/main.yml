@@ -106,7 +106,7 @@
                 value: "{{ ghost_email_pw }}"
               resources:
                 requests:
-                  cpu: "500m"
+                  cpu: "250m"
             
 
 - name: register MySQL pod
