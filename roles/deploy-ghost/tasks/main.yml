@@ -131,7 +131,7 @@
   delay: 5
 
 
-  # password e 123456
+  # password é ascn123
 - name: Admin account create
   shell: kubectl exec -it {{ mysql_pod.resources[0].metadata.name }} -- /bin/bash -c "mysql -D ghost -e \"UPDATE users SET name='ascn', password='\\\$2b\\\$10\\\$7ccB9rulkdjwd/nn4rLZP.0mU.Ebz7EmatHlzb3zFBD/ZrWqQHCI2', email='ascn@example.com', status='active' where id=1; SELECT * FROM users WHERE id=1;\""
   register: blog_admin
